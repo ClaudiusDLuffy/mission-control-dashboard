@@ -1,97 +1,69 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { DashboardHeader } from '@/components/dashboard/DashboardHeader'
-import { StatsOverview } from '@/components/dashboard/StatsOverview'
-import { GoalCategories } from '@/components/dashboard/GoalCategories'
-import { TasksSection } from '@/components/dashboard/TasksSection'
-import { QuickActions } from '@/components/dashboard/QuickActions'
-import { mockDashboardData } from '@/data/mockData'
-import type { Task, GoalCategoryData, DashboardStats } from '@/types'
+import { useEffect, useState } from 'react';
 
-export default function MissionControl() {
-  const [tasks, setTasks] = useState<Task[]>([])
-  const [goalCategories, setGoalCategories] = useState<GoalCategoryData[]>([])
-  const [stats, setStats] = useState<DashboardStats | null>(null)
-  const [loading, setLoading] = useState(true)
+export default function Home() {
+  const [sessionData, setSessionData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load mock data (replace with real data loading later)
-    const loadData = async () => {
-      await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate loading
-      const data = mockDashboardData()
-      setTasks(data.tasks)
-      setGoalCategories(data.goalCategories)
-      setStats(data.stats)
-      setLoading(false)
-    }
+    const fetchData = async () => {
+      try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+        const response = await fetch(`${apiUrl}/api/sessions/latest`);
+        const data = await response.json();
+        setSessionData(data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    loadData()
-  }, [])
-
-  const addTask = (task: Omit<Task, 'id' | 'createdAt'>) => {
-    const newTask: Task = {
-      ...task,
-      id: Math.random().toString(36).substr(2, 9),
-      createdAt: new Date()
-    }
-    setTasks(prev => [...prev, newTask])
-  }
-
-  const updateTask = (taskId: string, updates: Partial<Task>) => {
-    setTasks(prev => prev.map(task => 
-      task.id === taskId ? { ...task, ...updates } : task
-    ))
-  }
-
-  const deleteTask = (taskId: string) => {
-    setTasks(prev => prev.filter(task => task.id !== taskId))
-  }
+    fetchData();
+  }, []);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-400 mx-auto"></div>
-          <p className="text-slate-400 mt-4">Initializing Mission Control...</p>
-        </div>
+      <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
+        <div className="text-2xl">Loading your Mission Control...</div>
       </div>
-    )
+    );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
-      {/* Background Effects */}
-      <div className="fixed inset-0 bg-gradient-to-br from-blue-900/20 via-slate-950 to-purple-900/20 pointer-events-none" />
-      <div className="fixed inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-600/10 via-transparent to-transparent pointer-events-none" />
-      
-      <div className="relative">
-        <DashboardHeader />
-        
-        <main className="container mx-auto px-6 py-8 space-y-8">
-          {/* Stats Overview */}
-          <StatsOverview stats={stats!} />
-          
-          {/* Goal Categories */}
-          <GoalCategories categories={goalCategories} />
-          
-          <div className="grid lg:grid-cols-3 gap-8">
-            {/* Tasks Section */}
-            <div className="lg:col-span-2">
-              <TasksSection 
-                tasks={tasks}
-                onUpdateTask={updateTask}
-                onDeleteTask={deleteTask}
-              />
-            </div>
-            
-            {/* Quick Actions */}
-            <div>
-              <QuickActions onAddTask={addTask} />
-            </div>
-          </div>
-        </main>
+    <div className="min-h-screen bg-gray-900 text-white p-8">
+      <header className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">Mission Control Dashboard</h1>
+        <p className="text-gray-400">Gustavo Quintero • Director & Ironman</p>
+      </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="bg-gray-800 p-6 rounded-lg">
+          <h2 className="text-xl font-semibold mb-4">OpenClaw Connection</h2>
+          <p className="text-green-400">✅ Connected</p>
+          <p className="text-sm text-gray-400 mt-2">
+            Last updated: {sessionData ? new Date(sessionData['agent:main:main']?.updatedAt).toLocaleString() : 'N/A'}
+          </p>
+        </div>
+
+        <div className="bg-gray-800 p-6 rounded-lg">
+          <h2 className="text-xl font-semibold mb-4">Active Sessions</h2>
+          <p className="text-3xl font-bold">{sessionData ? Object.keys(sessionData).length : 0}</p>
+        </div>
+
+        <div className="bg-gray-800 p-6 rounded-lg">
+          <h2 className="text-xl font-semibold mb-4">Model</h2>
+          <p className="text-sm">{sessionData?.['agent:main:main']?.model || 'N/A'}</p>
+        </div>
+      </div>
+
+      <div className="mt-8 bg-gray-800 p-6 rounded-lg">
+        <h2 className="text-xl font-semibold mb-4">Raw Session Data</h2>
+        <pre className="text-xs overflow-auto max-h-96 bg-gray-900 p-4 rounded">
+          {JSON.stringify(sessionData, null, 2)}
+        </pre>
       </div>
     </div>
-  )
+  );
 }
