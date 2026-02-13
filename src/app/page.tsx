@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Activity, Zap, Brain, Clock, TrendingUp, Shield, Crown } from 'lucide-react';
-import AITeam from '@/components/AITeam';
+import AITeam from '../components/AITeam';
 
 interface SessionData {
   'agent:main:main'?: {
