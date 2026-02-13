@@ -201,7 +201,7 @@ export default function Home() {
               <div className="space-y-2 text-sm text-slate-400">
                 <div className="flex justify-between">
                   <span>Response Time</span>
-                  <span className="text-green-400">< 2s</span>
+                  <span className="text-green-400">&lt; 2s</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Data Accuracy</span>
