@@ -2,8 +2,16 @@
 
 import { useEffect, useState } from 'react';
 
+interface SessionData {
+  'agent:main:main'?: {
+    updatedAt?: number;
+    model?: string;
+  };
+  [key: string]: any;
+}
+
 export default function Home() {
-  const [sessionData, setSessionData] = useState(null);
+  const [sessionData, setSessionData] = useState<SessionData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,7 +51,9 @@ export default function Home() {
           <h2 className="text-xl font-semibold mb-4">OpenClaw Connection</h2>
           <p className="text-green-400">✅ Connected</p>
           <p className="text-sm text-gray-400 mt-2">
-            Last updated: {sessionData ? new Date(sessionData['agent:main:main']?.updatedAt).toLocaleString() : 'N/A'}
+            Last updated: {sessionData?.['agent:main:main']?.updatedAt 
+              ? new Date(sessionData['agent:main:main'].updatedAt).toLocaleString() 
+              : 'N/A'}
           </p>
         </div>
 
