@@ -1,10 +1,19 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Activity, Zap, Brain, Clock, TrendingUp, Shield } from 'lucide-react';
+import { Activity, Zap, Brain, Clock, TrendingUp, Shield, Crown } from 'lucide-react';
+import AITeam from '@/components/AITeam';
 
 interface SessionData {
   'agent:main:main'?: {
+    updatedAt?: number;
+    model?: string;
+  };
+  'agent:main:cron:dda15bec-9560-4403-a0ee-8790d84f8999'?: {
+    updatedAt?: number;
+    model?: string;
+  };
+  'agent:main:cron:c1370699-be10-4bdc-974f-6a6cd2bdbb0c'?: {
     updatedAt?: number;
     model?: string;
   };
@@ -84,11 +93,14 @@ export default function Home() {
         <div className="container mx-auto px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent">
-                Mission Control
-              </h1>
+              <div className="flex items-center gap-3">
+                <Crown className="w-8 h-8 text-amber-400" />
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 bg-clip-text text-transparent">
+                  AI Dream Team
+                </h1>
+              </div>
               <p className="text-slate-400 font-medium">
-                Gustavo Quintero • Director & Ironman
+                Your Elite AI Executive Squadron • Mission Control HQ
               </p>
             </div>
             
@@ -115,131 +127,31 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Main Dashboard */}
+      {/* AI Dream Team Dashboard */}
       <main className="relative z-10 container mx-auto px-8 py-12">
-        {/* Hero Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-          {/* OpenClaw Connection */}
-          <div className="glass-card p-8 group">
-            <div className="flex items-start justify-between mb-6">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 group-hover:from-blue-500/30 group-hover:to-blue-600/30 transition-colors">
-                <Brain className="w-7 h-7 text-blue-400" />
-              </div>
-              <div className="text-right">
-                <div className="text-3xl font-bold text-white">AI</div>
-                <div className="text-sm text-emerald-400 font-medium">Active</div>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <h3 className="text-xl font-semibold text-white">OpenClaw Intelligence</h3>
-              <div className="space-y-2 text-sm text-slate-400">
-                <div className="flex justify-between">
-                  <span>Status</span>
-                  <span className="text-emerald-400 font-medium">✅ Operational</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Last Sync</span>
-                  <span className="text-white">
-                    {formatLastUpdate(sessionData?.['agent:main:main']?.updatedAt)}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Model</span>
-                  <span className="text-blue-400 font-medium">
-                    {sessionData?.['agent:main:main']?.model?.split('/')[1] || 'Claude'}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+        {/* AI Dream Team Org Chart */}
+        <AITeam sessionData={sessionData} />
 
-          {/* Active Sessions */}
-          <div className="glass-card p-8 group">
-            <div className="flex items-start justify-between mb-6">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/20 group-hover:from-purple-500/30 group-hover:to-purple-600/30 transition-colors">
-                <Activity className="w-7 h-7 text-purple-400" />
-              </div>
-              <div className="text-right">
-                <div className="text-3xl font-bold text-white">
-                  {sessionData ? Object.keys(sessionData).length : 0}
-                </div>
-                <div className="text-sm text-purple-400 font-medium">Sessions</div>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <h3 className="text-xl font-semibold text-white">Active Processes</h3>
-              <div className="space-y-2 text-sm text-slate-400">
-                <div className="flex justify-between">
-                  <span>Morning Edge</span>
-                  <span className="text-green-400">✓ 6:00 AM</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Chief of Staff</span>
-                  <span className="text-green-400">✓ 6:05 AM</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Web Intel</span>
-                  <span className="text-green-400">✓ Active</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* System Performance */}
-          <div className="glass-card p-8 group">
-            <div className="flex items-start justify-between mb-6">
-              <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500/20 to-emerald-600/20 group-hover:from-emerald-500/30 group-hover:to-emerald-600/30 transition-colors">
-                <TrendingUp className="w-7 h-7 text-emerald-400" />
-              </div>
-              <div className="text-right">
-                <div className="text-3xl font-bold text-white">97%</div>
-                <div className="text-sm text-emerald-400 font-medium">Uptime</div>
-              </div>
-            </div>
-            <div className="space-y-3">
-              <h3 className="text-xl font-semibold text-white">Performance Metrics</h3>
-              <div className="space-y-2 text-sm text-slate-400">
-                <div className="flex justify-between">
-                  <span>Response Time</span>
-                  <span className="text-green-400">&lt; 2s</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Data Accuracy</span>
-                  <span className="text-green-400">99.8%</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Tasks Completed</span>
-                  <span className="text-blue-400">24/24</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Mission Status */}
-        <div className="glass-card p-8 mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <Shield className="w-6 h-6 text-blue-400" />
-              <h2 className="text-2xl font-bold text-white">System Intelligence</h2>
-            </div>
-            <div className="text-sm text-slate-400">
-              Real-time OpenClaw data stream
-            </div>
-          </div>
-          
-          <div className="bg-slate-900/50 rounded-xl p-6 border border-slate-700/50">
-            <pre className="text-sm text-slate-300 overflow-auto max-h-96 leading-relaxed">
+        {/* Technical Debug Panel (Collapsible) */}
+        <details className="mt-16">
+          <summary className="cursor-pointer text-slate-400 hover:text-white transition-colors mb-4 flex items-center gap-2">
+            <Shield className="w-4 h-4" />
+            <span>Technical Debug Panel</span>
+          </summary>
+          <div className="glass-card p-6">
+            <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-700/50">
+              <pre className="text-xs text-slate-300 overflow-auto max-h-64 leading-relaxed">
 {JSON.stringify(sessionData, null, 2)}
-            </pre>
+              </pre>
+            </div>
           </div>
-        </div>
+        </details>
 
         {/* Command Center Footer */}
-        <div className="text-center py-8 border-t border-white/10">
+        <div className="text-center py-12 mt-16 border-t border-white/10">
           <p className="text-slate-400 mb-2">
-            <span className="text-blue-400 font-semibold">Mission Control 2.0</span> • 
-            Built for transformation • From 284 lbs to Ironman
+            <span className="text-amber-400 font-semibold">AI Dream Team</span> • 
+            Elite Executive Squadron • From 284 lbs to Ironman CEO
           </p>
           <p className="text-xs text-slate-500">
             "I can do all things through Christ who strengthens me." — Philippians 4:13
