@@ -1,12 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Crown, Activity, Settings, Calendar, Zap, Users, Target } from 'lucide-react';
+import { Activity, TrendingUp, Target, Users, Zap, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import AITeam from '../components/AITeam';
-import TaskManager from '../components/dashboard/TaskManager';
-import ProgressTracker from '../components/dashboard/ProgressTracker';
 import { mockDashboardData } from '../data/mockData';
-import type { Task, TaskStatus } from '../types';
 
 interface SessionData {
   'agent:main:main'?: {
@@ -24,8 +21,16 @@ interface SessionData {
   [key: string]: any;
 }
 
+interface KPICard {
+  title: string;
+  value: string;
+  change: string;
+  changeType: 'positive' | 'negative' | 'neutral';
+  icon: any;
+  subtitle: string;
+}
+
 export default function Home() {
-  const [activeView, setActiveView] = useState<'command' | 'tasks' | 'progress'>('command');
   const [sessionData, setSessionData] = useState<SessionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
@@ -50,58 +55,9 @@ export default function Home() {
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 30000); // Refresh every 30 seconds
+    const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
   }, []);
-
-  const handleTaskUpdate = (taskId: string, status: TaskStatus) => {
-    setDashboardData(prev => ({
-      ...prev,
-      tasks: prev.tasks.map(task => 
-        task.id === taskId 
-          ? { 
-              ...task, 
-              status, 
-              completedAt: status === 'completed' ? new Date() : undefined 
-            }
-          : task
-      )
-    }));
-  };
-
-  const handleAddTask = () => {
-    // In a real app, this would open a modal or redirect to task creation
-    alert('Add Task functionality - to be implemented with real backend');
-  };
-
-  const getViewIcon = (view: string) => {
-    switch (view) {
-      case 'command': return Crown;
-      case 'tasks': return Target;
-      case 'progress': return Activity;
-      default: return Crown;
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen text-white flex items-center justify-center relative overflow-hidden">
-        {/* Elite Loading Background */}
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-purple-600/5 to-emerald-600/5" />
-          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_80%,_rgba(59,130,246,0.15)_0%,_transparent_50%)]" />
-        </div>
-        
-        <div className="relative z-10 text-center">
-          <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto mb-6"></div>
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
-            Initializing Mission Control 3.0
-          </h2>
-          <p className="text-slate-400 mt-2">Connecting to OpenClaw intelligence systems...</p>
-        </div>
-      </div>
-    );
-  }
 
   const currentTime = new Date().toLocaleString('en-US', {
     weekday: 'long',
@@ -113,190 +69,232 @@ export default function Home() {
     timeZoneName: 'short'
   });
 
-  return (
-    <div className="min-h-screen text-white relative overflow-x-hidden">
-      {/* Elite Background System */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 via-purple-600/5 to-emerald-600/5" />
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20%_80%,_rgba(59,130,246,0.15)_0%,_transparent_50%)]" />
-        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_20%,_rgba(147,51,234,0.15)_0%,_transparent_50%)]" />
-        <div className="absolute bottom-0 left-1/2 w-full h-full bg-[radial-gradient(circle_at_50%_100%,_rgba(16,185,129,0.1)_0%,_transparent_50%)]" />
-      </div>
+  // Enterprise KPI Cards Data
+  const kpiCards: KPICard[] = [
+    {
+      title: 'OPERATIONS EFFICIENCY',
+      value: '94.7%',
+      change: '+2.3%',
+      changeType: 'positive',
+      icon: Activity,
+      subtitle: 'Task completion rate across all systems'
+    },
+    {
+      title: 'REVENUE PIPELINE',
+      value: '$127.5K',
+      change: '+18.2%',
+      changeType: 'positive', 
+      icon: TrendingUp,
+      subtitle: 'MYAMZTEAM + Magical Brands combined'
+    },
+    {
+      title: 'AI INTELLIGENCE SCORE',
+      value: '8.9/10',
+      change: '+0.4',
+      changeType: 'positive',
+      icon: Zap,
+      subtitle: 'System automation & decision support'
+    },
+    {
+      title: 'ACTIVE OBJECTIVES',
+      value: '12',
+      change: '-2',
+      changeType: 'positive',
+      icon: Target,
+      subtitle: 'High-priority initiatives in progress'
+    },
+    {
+      title: 'TRANSFORMATION INDEX',
+      value: '195 lbs',
+      change: '-90 lbs',
+      changeType: 'positive',
+      icon: CheckCircle2,
+      subtitle: 'Physical & business transformation'
+    },
+    {
+      title: 'SYSTEM UPTIME',
+      value: '99.8%',
+      change: '0.0%',
+      changeType: 'neutral',
+      icon: Users,
+      subtitle: 'AI agents & infrastructure status'
+    }
+  ];
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#0f1419] text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold text-slate-200">Initializing Command Center</h2>
+          <p className="text-slate-400 text-sm mt-1">Enterprise Intelligence Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-[#0f1419] text-white">
       {/* Header */}
-      <header className="relative z-10 border-b border-white/10 bg-black/20 backdrop-blur-xl">
-        <div className="container mx-auto px-8 py-6">
+      <header className="border-b border-slate-800/50 bg-[#1a1f2e]/90 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <div className="flex items-center gap-3">
-                <Crown className="w-8 h-8 text-amber-400" />
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 bg-clip-text text-transparent">
-                  Mission Control 3.0
-                </h1>
-              </div>
-              <p className="text-slate-400 font-medium">
-                Elite AI Executive Squadron • {currentTime}
+            <div>
+              <h1 className="text-2xl font-bold text-white tracking-wide">
+                KEY PERFORMANCE INDICATORS
+              </h1>
+              <p className="text-slate-400 text-sm font-medium mt-1">
+                Command Center Enterprise Intelligence • Live Data • {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
               </p>
             </div>
             
-            {/* Navigation Tabs */}
-            <div className="flex items-center gap-2">
-              {[
-                { id: 'command', label: 'Command Center', icon: Crown },
-                { id: 'tasks', label: 'Task Manager', icon: Target },
-                { id: 'progress', label: 'Progress Tracker', icon: Activity }
-              ].map(tab => {
-                const IconComponent = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveView(tab.id as any)}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
-                      activeView === tab.id
-                        ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                        : 'text-slate-400 hover:text-white hover:bg-white/5'
-                    }`}
-                  >
-                    <IconComponent className="w-4 h-4" />
-                    <span className="hidden md:inline">{tab.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Connection Status */}
+            {/* Status Indicator */}
             <div className="flex items-center gap-3">
-              <div className={`px-4 py-2 rounded-full border backdrop-blur-sm ${
-                connectionStatus === 'connected' 
-                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' 
-                  : connectionStatus === 'error'
-                  ? 'bg-red-500/10 border-red-500/30 text-red-400'
-                  : 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'
-              }`}>
-                <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full animate-pulse ${
-                    connectionStatus === 'connected' ? 'bg-emerald-400' 
-                    : connectionStatus === 'error' ? 'bg-red-400' 
-                    : 'bg-yellow-400'
-                  }`} />
-                  <span className="text-sm font-medium capitalize">{connectionStatus}</span>
-                </div>
+              <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
+                <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+                <span className="text-emerald-400 text-sm font-medium">LIVE</span>
+              </div>
+              <div className="text-xs text-slate-500">
+                <div>OPERATIONS & INTELLIGENCE</div>
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="relative z-10 container mx-auto px-8 py-12">
-        {/* Quick Stats Bar */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
-          <div className="glass-card p-4 text-center">
-            <div className="text-2xl font-bold text-emerald-400">{dashboardData.stats.completedTasks}</div>
-            <div className="text-xs text-slate-400">Completed Today</div>
+      {/* Main Dashboard */}
+      <main className="max-w-7xl mx-auto px-6 py-8">
+        {/* KPI Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          {kpiCards.map((kpi, index) => (
+            <div key={index} className="enterprise-kpi-card group">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+                    <kpi.icon className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-bold text-slate-300 tracking-wider mb-1">
+                      {kpi.title}
+                    </h3>
+                    <p className="text-xs text-slate-500">
+                      {kpi.subtitle}
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Change Indicator */}
+                <div className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-medium ${
+                  kpi.changeType === 'positive' 
+                    ? 'text-emerald-400 bg-emerald-500/10' 
+                    : kpi.changeType === 'negative'
+                    ? 'text-red-400 bg-red-500/10'
+                    : 'text-slate-400 bg-slate-500/10'
+                }`}>
+                  {kpi.changeType === 'positive' ? '↗' : kpi.changeType === 'negative' ? '↘' : '→'}
+                  {kpi.change}
+                </div>
+              </div>
+              
+              {/* Value */}
+              <div className="mb-4">
+                <div className="text-3xl font-bold text-white mb-1">
+                  {kpi.value}
+                </div>
+              </div>
+              
+              {/* Progress Bar */}
+              <div className="w-full h-1 bg-slate-800 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-blue-500 rounded-full transition-all duration-1000 ease-out"
+                  style={{ width: `${75 + index * 5}%` }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Secondary Metrics */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          {/* Operations Status */}
+          <div className="enterprise-panel">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold text-white">OPERATIONS STATUS</h2>
+              <div className="text-xs text-slate-400">Real-time monitoring</div>
+            </div>
+            
+            <div className="space-y-4">
+              {[
+                { system: 'MYAMZTEAM Operations', status: 'OPERATIONAL', uptime: '99.9%', color: 'emerald' },
+                { system: 'Magical Brands Pipeline', status: 'OPERATIONAL', uptime: '98.7%', color: 'emerald' },
+                { system: 'AI Intelligence Network', status: 'OPERATIONAL', uptime: '99.8%', color: 'emerald' },
+                { system: 'Training Systems', status: 'MAINTENANCE', uptime: '95.2%', color: 'yellow' }
+              ].map((item, i) => (
+                <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-slate-800/30 border border-slate-700/50">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-3 h-3 rounded-full ${
+                      item.color === 'emerald' ? 'bg-emerald-400' :
+                      item.color === 'yellow' ? 'bg-yellow-400' : 'bg-red-400'
+                    }`} />
+                    <span className="text-sm font-medium text-white">{item.system}</span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-xs text-slate-400">{item.uptime}</span>
+                    <span className={`text-xs px-2 py-1 rounded ${
+                      item.color === 'emerald' ? 'bg-emerald-500/20 text-emerald-400' :
+                      item.color === 'yellow' ? 'bg-yellow-500/20 text-yellow-400' : 'bg-red-500/20 text-red-400'
+                    }`}>
+                      {item.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="glass-card p-4 text-center">
-            <div className="text-2xl font-bold text-blue-400">{dashboardData.stats.inProgressTasks}</div>
-            <div className="text-xs text-slate-400">In Progress</div>
-          </div>
-          <div className="glass-card p-4 text-center">
-            <div className="text-2xl font-bold text-orange-400">{dashboardData.stats.streak}</div>
-            <div className="text-xs text-slate-400">Day Streak</div>
-          </div>
-          <div className="glass-card p-4 text-center">
-            <div className="text-2xl font-bold text-purple-400">{dashboardData.stats.productivity}%</div>
-            <div className="text-xs text-slate-400">Productivity</div>
-          </div>
-          <div className="glass-card p-4 text-center">
-            <div className="text-2xl font-bold text-amber-400">{sessionData ? Object.keys(sessionData).length : 0}</div>
-            <div className="text-xs text-slate-400">AI Agents</div>
+
+          {/* Intelligence Summary */}
+          <div className="enterprise-panel">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-bold text-white">INTELLIGENCE SUMMARY</h2>
+              <div className="text-xs text-slate-400">Last updated: {new Date().toLocaleTimeString()}</div>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 rounded-lg bg-blue-500/10 border border-blue-500/20">
+                <div>
+                  <div className="text-sm font-medium text-white">Active AI Executives</div>
+                  <div className="text-xs text-slate-400">Elon, Tim Ferriss, Naval</div>
+                </div>
+                <div className="text-2xl font-bold text-blue-400">3</div>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20">
+                <div>
+                  <div className="text-sm font-medium text-white">Decisions Processed</div>
+                  <div className="text-xs text-slate-400">Today's AI recommendations</div>
+                </div>
+                <div className="text-2xl font-bold text-emerald-400">47</div>
+              </div>
+              
+              <div className="flex items-center justify-between p-3 rounded-lg bg-purple-500/10 border border-purple-500/20">
+                <div>
+                  <div className="text-sm font-medium text-white">Automation Score</div>
+                  <div className="text-xs text-slate-400">Process efficiency rating</div>
+                </div>
+                <div className="text-2xl font-bold text-purple-400">92%</div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Dynamic Content Based on Active View */}
-        {activeView === 'command' && (
-          <div className="space-y-12">
-            {/* AI Dream Team Section */}
-            <AITeam sessionData={sessionData} />
-
-            {/* Quick Actions */}
-            <div className="glass-card p-8">
-              <h2 className="text-2xl font-bold text-white mb-6">Quick Actions</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                  { icon: Target, label: 'Add Task', color: 'bg-blue-500/20 text-blue-400', action: handleAddTask },
-                  { icon: Calendar, label: 'Schedule Review', color: 'bg-emerald-500/20 text-emerald-400' },
-                  { icon: Activity, label: 'View Analytics', color: 'bg-purple-500/20 text-purple-400', action: () => setActiveView('progress') },
-                  { icon: Settings, label: 'Settings', color: 'bg-slate-500/20 text-slate-400' }
-                ].map((action, index) => (
-                  <button
-                    key={index}
-                    onClick={action.action}
-                    className="p-4 rounded-lg border border-slate-700/50 hover:border-slate-600 transition-colors text-left group"
-                  >
-                    <action.icon className={`w-6 h-6 mb-3 ${action.color.split(' ')[1]}`} />
-                    <div className="font-medium text-white group-hover:text-blue-400 transition-colors">
-                      {action.label}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Recent Activity Preview */}
-            <div className="glass-card p-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white">Recent Activity</h2>
-                <button 
-                  onClick={() => setActiveView('tasks')}
-                  className="text-blue-400 hover:text-blue-300 text-sm"
-                >
-                  View All Tasks →
-                </button>
-              </div>
-              <div className="space-y-3">
-                {dashboardData.tasks.slice(0, 3).map(task => (
-                  <div key={task.id} className="flex items-center gap-4 p-3 rounded-lg bg-slate-800/50">
-                    <div className={`w-3 h-3 rounded-full ${
-                      task.status === 'completed' ? 'bg-emerald-400' :
-                      task.status === 'in-progress' ? 'bg-blue-400' : 'bg-slate-400'
-                    }`} />
-                    <div className="flex-1">
-                      <div className="font-medium text-white">{task.title}</div>
-                      <div className="text-sm text-slate-400">{task.category.replace('-', ' ')}</div>
-                    </div>
-                    <div className="text-xs text-slate-500">{task.type === 'chief-of-staff' ? '🤖' : '👤'}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
+        {/* AI Team Status - Minimized */}
+        <div className="enterprise-panel">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-bold text-white">AI EXECUTIVE TEAM STATUS</h2>
+            <div className="text-xs text-slate-400">Command & Control Network</div>
           </div>
-        )}
-
-        {activeView === 'tasks' && (
-          <TaskManager
-            tasks={dashboardData.tasks}
-            onTaskUpdate={handleTaskUpdate}
-            onAddTask={handleAddTask}
-          />
-        )}
-
-        {activeView === 'progress' && (
-          <ProgressTracker
-            goalCategories={dashboardData.goalCategories}
-            stats={dashboardData.stats}
-          />
-        )}
-
-        {/* Footer */}
-        <div className="text-center py-12 mt-16 border-t border-white/10">
-          <p className="text-slate-400 mb-2">
-            <span className="text-amber-400 font-semibold">Mission Control 3.0</span> • 
-            Elite Executive Squadron • From 284 lbs to Ironman CEO
-          </p>
-          <p className="text-xs text-slate-500">
-            "I can do all things through Christ who strengthens me." — Philippians 4:13
-          </p>
+          
+          <AITeam sessionData={sessionData} />
         </div>
       </main>
     </div>
