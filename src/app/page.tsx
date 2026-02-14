@@ -1,8 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Activity, Zap, Brain, Clock, TrendingUp, Shield, Crown } from 'lucide-react';
+import { Crown, Activity, Settings, Calendar, Zap, Users, Target } from 'lucide-react';
 import AITeam from '../components/AITeam';
+import TaskManager from '../components/dashboard/TaskManager';
+import ProgressTracker from '../components/dashboard/ProgressTracker';
+import { mockDashboardData } from '../data/mockData';
+import type { Task, TaskStatus } from '../types';
 
 interface SessionData {
   'agent:main:main'?: {
@@ -21,9 +25,13 @@ interface SessionData {
 }
 
 export default function Home() {
+  const [activeView, setActiveView] = useState<'command' | 'tasks' | 'progress'>('command');
   const [sessionData, setSessionData] = useState<SessionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'error'>('connecting');
+  
+  // Dashboard data
+  const [dashboardData, setDashboardData] = useState(mockDashboardData());
 
   useEffect(() => {
     const fetchData = async () => {
@@ -46,16 +54,33 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  const formatLastUpdate = (timestamp?: number) => {
-    if (!timestamp) return 'Never';
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
-    
-    if (diff < 60) return `${diff}s ago`;
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    return date.toLocaleDateString();
+  const handleTaskUpdate = (taskId: string, status: TaskStatus) => {
+    setDashboardData(prev => ({
+      ...prev,
+      tasks: prev.tasks.map(task => 
+        task.id === taskId 
+          ? { 
+              ...task, 
+              status, 
+              completedAt: status === 'completed' ? new Date() : undefined 
+            }
+          : task
+      )
+    }));
+  };
+
+  const handleAddTask = () => {
+    // In a real app, this would open a modal or redirect to task creation
+    alert('Add Task functionality - to be implemented with real backend');
+  };
+
+  const getViewIcon = (view: string) => {
+    switch (view) {
+      case 'command': return Crown;
+      case 'tasks': return Target;
+      case 'progress': return Activity;
+      default: return Crown;
+    }
   };
 
   if (loading) {
@@ -70,13 +95,23 @@ export default function Home() {
         <div className="relative z-10 text-center">
           <div className="w-16 h-16 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin mx-auto mb-6"></div>
           <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
-            Initializing Mission Control
+            Initializing Mission Control 3.0
           </h2>
           <p className="text-slate-400 mt-2">Connecting to OpenClaw intelligence systems...</p>
         </div>
       </div>
     );
   }
+
+  const currentTime = new Date().toLocaleString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long', 
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZoneName: 'short'
+  });
 
   return (
     <div className="min-h-screen text-white relative overflow-x-hidden">
@@ -96,17 +131,42 @@ export default function Home() {
               <div className="flex items-center gap-3">
                 <Crown className="w-8 h-8 text-amber-400" />
                 <h1 className="text-4xl font-bold bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 bg-clip-text text-transparent">
-                  AI Dream Team
+                  Mission Control 3.0
                 </h1>
               </div>
               <p className="text-slate-400 font-medium">
-                Your Elite AI Executive Squadron • Mission Control HQ
+                Elite AI Executive Squadron • {currentTime}
               </p>
             </div>
             
+            {/* Navigation Tabs */}
+            <div className="flex items-center gap-2">
+              {[
+                { id: 'command', label: 'Command Center', icon: Crown },
+                { id: 'tasks', label: 'Task Manager', icon: Target },
+                { id: 'progress', label: 'Progress Tracker', icon: Activity }
+              ].map(tab => {
+                const IconComponent = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveView(tab.id as any)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${
+                      activeView === tab.id
+                        ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                        : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    }`}
+                  >
+                    <IconComponent className="w-4 h-4" />
+                    <span className="hidden md:inline">{tab.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+
             {/* Connection Status */}
             <div className="flex items-center gap-3">
-              <div className={`px-4 py-2 rounded-full border backdrop-blur-sm $\{
+              <div className={`px-4 py-2 rounded-full border backdrop-blur-sm ${
                 connectionStatus === 'connected' 
                   ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' 
                   : connectionStatus === 'error'
@@ -114,7 +174,7 @@ export default function Home() {
                   : 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'
               }`}>
                 <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full animate-pulse $\{
+                  <div className={`w-2 h-2 rounded-full animate-pulse ${
                     connectionStatus === 'connected' ? 'bg-emerald-400' 
                     : connectionStatus === 'error' ? 'bg-red-400' 
                     : 'bg-yellow-400'
@@ -127,30 +187,111 @@ export default function Home() {
         </div>
       </header>
 
-      {/* AI Dream Team Dashboard */}
+      {/* Main Content */}
       <main className="relative z-10 container mx-auto px-8 py-12">
-        {/* AI Dream Team Org Chart */}
-        <AITeam sessionData={sessionData} />
+        {/* Quick Stats Bar */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-12">
+          <div className="glass-card p-4 text-center">
+            <div className="text-2xl font-bold text-emerald-400">{dashboardData.stats.completedTasks}</div>
+            <div className="text-xs text-slate-400">Completed Today</div>
+          </div>
+          <div className="glass-card p-4 text-center">
+            <div className="text-2xl font-bold text-blue-400">{dashboardData.stats.inProgressTasks}</div>
+            <div className="text-xs text-slate-400">In Progress</div>
+          </div>
+          <div className="glass-card p-4 text-center">
+            <div className="text-2xl font-bold text-orange-400">{dashboardData.stats.streak}</div>
+            <div className="text-xs text-slate-400">Day Streak</div>
+          </div>
+          <div className="glass-card p-4 text-center">
+            <div className="text-2xl font-bold text-purple-400">{dashboardData.stats.productivity}%</div>
+            <div className="text-xs text-slate-400">Productivity</div>
+          </div>
+          <div className="glass-card p-4 text-center">
+            <div className="text-2xl font-bold text-amber-400">{sessionData ? Object.keys(sessionData).length : 0}</div>
+            <div className="text-xs text-slate-400">AI Agents</div>
+          </div>
+        </div>
 
-        {/* Technical Debug Panel (Collapsible) */}
-        <details className="mt-16">
-          <summary className="cursor-pointer text-slate-400 hover:text-white transition-colors mb-4 flex items-center gap-2">
-            <Shield className="w-4 h-4" />
-            <span>Technical Debug Panel</span>
-          </summary>
-          <div className="glass-card p-6">
-            <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-700/50">
-              <pre className="text-xs text-slate-300 overflow-auto max-h-64 leading-relaxed">
-{JSON.stringify(sessionData, null, 2)}
-              </pre>
+        {/* Dynamic Content Based on Active View */}
+        {activeView === 'command' && (
+          <div className="space-y-12">
+            {/* AI Dream Team Section */}
+            <AITeam sessionData={sessionData} />
+
+            {/* Quick Actions */}
+            <div className="glass-card p-8">
+              <h2 className="text-2xl font-bold text-white mb-6">Quick Actions</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { icon: Target, label: 'Add Task', color: 'bg-blue-500/20 text-blue-400', action: handleAddTask },
+                  { icon: Calendar, label: 'Schedule Review', color: 'bg-emerald-500/20 text-emerald-400' },
+                  { icon: Activity, label: 'View Analytics', color: 'bg-purple-500/20 text-purple-400', action: () => setActiveView('progress') },
+                  { icon: Settings, label: 'Settings', color: 'bg-slate-500/20 text-slate-400' }
+                ].map((action, index) => (
+                  <button
+                    key={index}
+                    onClick={action.action}
+                    className="p-4 rounded-lg border border-slate-700/50 hover:border-slate-600 transition-colors text-left group"
+                  >
+                    <action.icon className={`w-6 h-6 mb-3 ${action.color.split(' ')[1]}`} />
+                    <div className="font-medium text-white group-hover:text-blue-400 transition-colors">
+                      {action.label}
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Recent Activity Preview */}
+            <div className="glass-card p-8">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-white">Recent Activity</h2>
+                <button 
+                  onClick={() => setActiveView('tasks')}
+                  className="text-blue-400 hover:text-blue-300 text-sm"
+                >
+                  View All Tasks →
+                </button>
+              </div>
+              <div className="space-y-3">
+                {dashboardData.tasks.slice(0, 3).map(task => (
+                  <div key={task.id} className="flex items-center gap-4 p-3 rounded-lg bg-slate-800/50">
+                    <div className={`w-3 h-3 rounded-full ${
+                      task.status === 'completed' ? 'bg-emerald-400' :
+                      task.status === 'in-progress' ? 'bg-blue-400' : 'bg-slate-400'
+                    }`} />
+                    <div className="flex-1">
+                      <div className="font-medium text-white">{task.title}</div>
+                      <div className="text-sm text-slate-400">{task.category.replace('-', ' ')}</div>
+                    </div>
+                    <div className="text-xs text-slate-500">{task.type === 'chief-of-staff' ? '🤖' : '👤'}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </details>
+        )}
 
-        {/* Command Center Footer */}
+        {activeView === 'tasks' && (
+          <TaskManager
+            tasks={dashboardData.tasks}
+            onTaskUpdate={handleTaskUpdate}
+            onAddTask={handleAddTask}
+          />
+        )}
+
+        {activeView === 'progress' && (
+          <ProgressTracker
+            goalCategories={dashboardData.goalCategories}
+            stats={dashboardData.stats}
+          />
+        )}
+
+        {/* Footer */}
         <div className="text-center py-12 mt-16 border-t border-white/10">
           <p className="text-slate-400 mb-2">
-            <span className="text-amber-400 font-semibold">AI Dream Team</span> • 
+            <span className="text-amber-400 font-semibold">Mission Control 3.0</span> • 
             Elite Executive Squadron • From 284 lbs to Ironman CEO
           </p>
           <p className="text-xs text-slate-500">
