@@ -8,7 +8,7 @@
   }
   
   body {
-    background: #1a1f2e;
+    background: #0f172a;
     color: #f8fafc;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     font-weight: 400;
@@ -19,313 +19,287 @@
 }
 
 @layer components {
-  /* Enterprise Dashboard Cards */
-  .enterprise-card {
-    background: #232937;
+  /* Glass Panel for Major Sections */
+  .glass-panel {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.3) 0%, rgba(15, 23, 42, 0.5) 100%);
+    backdrop-filter: blur(16px) saturate(120%);
     border: 1px solid rgba(71, 85, 105, 0.2);
-    border-radius: 16px;
-    transition: all 0.3s ease;
-  }
-  
-  .enterprise-card:hover {
-    border-color: rgba(59, 130, 246, 0.3);
-    transform: translateY(-1px);
-  }
-  
-  /* KPI Card Styling */
-  .kpi-card {
-    background: rgba(59, 130, 246, 0.1);
-    border: 1px solid rgba(59, 130, 246, 0.2);
-    border-radius: 16px;
-    padding: 16px;
-    transition: all 0.3s ease;
-  }
-  
-  .kpi-card-emerald {
-    background: rgba(16, 185, 129, 0.1);
-    border-color: rgba(16, 185, 129, 0.2);
-  }
-  
-  .kpi-card-orange {
-    background: rgba(245, 158, 11, 0.1);
-    border-color: rgba(245, 158, 11, 0.2);
-  }
-  
-  .kpi-card-purple {
-    background: rgba(147, 51, 234, 0.1);
-    border-color: rgba(147, 51, 234, 0.2);
-  }
-  
-  /* Channel Progress Bars */
-  .channel-progress {
-    width: 100%;
-    height: 3px;
-    background: rgba(71, 85, 105, 0.3);
-    border-radius: 2px;
+    border-radius: 24px;
+    padding: 32px;
+    position: relative;
     overflow: hidden;
   }
   
-  .channel-progress-fill {
-    height: 100%;
-    border-radius: 2px;
-    transition: width 1s ease-out;
+  .glass-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.4) 50%, transparent 100%);
+  }
+
+  /* Executive Card Styling */
+  .executive-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(71, 85, 105, 0.2);
+    border-radius: 16px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 140px;
   }
   
-  /* Mobile Header Styling */
-  .mobile-header {
-    background: #232937;
-    border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+  .executive-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(59, 130, 246, 0.3);
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.7) 100%);
+    box-shadow: 0 10px 40px -10px rgba(59, 130, 246, 0.2);
+  }
+
+  /* Org Chart Connectors */
+  .org-line-vertical {
+    width: 2px;
+    height: 60px;
+    background: linear-gradient(to bottom, transparent, rgba(59, 130, 246, 0.6), transparent);
   }
   
-  /* Live Data Indicator */
-  .live-indicator {
-    background: rgba(16, 185, 129, 0.2);
+  .org-line-horizontal {
+    width: 300px;
+    height: 2px;
+    background: linear-gradient(to right, transparent, rgba(59, 130, 246, 0.6), transparent);
+  }
+  
+  .org-connector-up {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 30px;
+    background: linear-gradient(to bottom, rgba(59, 130, 246, 0.6), transparent);
+  }
+  
+  .org-connector-down {
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 30px;
+    background: linear-gradient(to bottom, transparent, rgba(59, 130, 246, 0.6));
+  }
+
+  /* Task Card Styling */
+  .task-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(71, 85, 105, 0.2);
+    border-radius: 16px;
+    padding: 20px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Task Column */
+  .task-column {
+    min-height: 400px;
+  }
+
+  /* Progress Card */
+  .progress-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(71, 85, 105, 0.2);
+    border-radius: 20px;
+    padding: 24px;
+    transition: all 0.3s ease;
+  }
+  
+  .progress-card:hover {
+    transform: translateY(-1px);
+    border-color: rgba(59, 130, 246, 0.3);
+  }
+
+  /* Progress Bar Container */
+  .progress-bar-container {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.3) 0%, rgba(15, 23, 42, 0.4) 100%);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(71, 85, 105, 0.15);
+    border-radius: 16px;
+    padding: 24px;
+  }
+
+  /* Animations */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out forwards;
+  }
+  
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(0.33);
+      opacity: 1;
+    }
+    80%, 100% {
+      transform: scale(2.4);
+      opacity: 0;
+    }
+  }
+  
+  @keyframes pulse-dot {
+    0% {
+      transform: scale(0.8);
+    }
+    50% {
+      transform: scale(1.0);
+    }
+    100% {
+      transform: scale(0.8);
+    }
+  }
+
+  /* Status Indicators */
+  .status-active::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
     border: 1px solid rgba(16, 185, 129, 0.3);
-    border-radius: 9999px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 12px;
+    border-radius: 50%;
+    animation: pulse-ring 1.25s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
   }
   
-  .live-dot {
+  .status-active::after {
+    content: '';
+    position: absolute;
     width: 8px;
     height: 8px;
     background: #10b981;
     border-radius: 50%;
-    animation: pulse 2s infinite;
+    animation: pulse-dot 1.25s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
   }
-  
-  @keyframes pulse {
-    0%, 100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
-    }
+
+  /* Typography */
+  .heading-gradient {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
-  
-  /* Channel Icon Styling */
-  .channel-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 14px;
-    color: white;
-  }
-  
-  .channel-icon-amazon {
-    background: #ff9500;
-  }
-  
-  .channel-icon-walmart {
-    background: #0071ce;
-  }
-  
-  .channel-icon-dtc {
-    background: #8b5cf6;
-  }
-  
-  .channel-icon-ebay {
-    background: #e53e3e;
-  }
-  
-  /* Revenue Chart Styling */
-  .chart-container {
-    height: 128px;
+
+  /* Responsive Grid Systems */
+  .org-chart {
     width: 100%;
+    overflow-x: auto;
+    padding-bottom: 20px;
   }
   
-  /* Progress Bar at Bottom */
-  .progress-indicator {
-    width: 100%;
-    height: 4px;
-    background: #475569;
-    border-radius: 2px;
-    margin-top: 16px;
+  .org-chart-container {
+    min-height: 400px;
+  }
+
+  /* Interactive Elements */
+  .interactive-hover {
+    transition: all 0.2s ease;
   }
   
-  .progress-fill {
-    height: 100%;
-    background: white;
-    border-radius: 2px;
-    width: 80%;
+  .interactive-hover:hover {
+    transform: scale(1.02);
   }
   
-  /* Typography Classes */
-  .section-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: white;
-    margin-bottom: 24px;
+  .interactive-hover:active {
+    transform: scale(0.98);
   }
-  
-  .section-subtitle {
-    font-size: 12px;
-    font-weight: 500;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 16px;
-  }
-  
-  .metric-value {
-    font-size: 28px;
-    font-weight: 700;
-    color: white;
-    line-height: 1.1;
-    margin-bottom: 8px;
-  }
-  
-  .metric-change {
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  
-  .metric-change-positive {
-    color: #10b981;
-  }
-  
-  .metric-change-negative {
-    color: #ef4444;
-  }
-  
-  /* Mobile Optimizations */
-  @media (max-width: 640px) {
-    .section-title {
-      font-size: 18px;
-    }
-    
-    .metric-value {
-      font-size: 24px;
-    }
-    
-    .enterprise-card {
-      padding: 20px;
-    }
-  }
-  
-  /* Responsive Grid */
-  .kpi-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-  
+
   /* Custom Scrollbar */
   ::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
+    width: 6px;
+    height: 6px;
   }
   
   ::-webkit-scrollbar-track {
     background: rgba(15, 23, 42, 0.5);
-    border-radius: 2px;
+    border-radius: 3px;
   }
   
   ::-webkit-scrollbar-thumb {
     background: rgba(71, 85, 105, 0.5);
-    border-radius: 2px;
+    border-radius: 3px;
   }
   
   ::-webkit-scrollbar-thumb:hover {
     background: rgba(59, 130, 246, 0.5);
   }
-  
-  /* Button Styling */
-  .header-button {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: rgba(71, 85, 105, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #cbd5e1;
-    border: none;
-    transition: all 0.2s ease;
+
+  /* Priority Indicators */
+  .priority-high {
+    border-left: 4px solid #ef4444;
   }
   
-  .header-button:hover {
-    background: rgba(71, 85, 105, 0.7);
+  .priority-medium {
+    border-left: 4px solid #f59e0b;
   }
   
-  /* User Avatar */
-  .user-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: #3b82f6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 700;
-    font-size: 14px;
+  .priority-low {
+    border-left: 4px solid #10b981;
+  }
+
+  /* Focus States */
+  .focus-ring {
+    outline: 2px solid rgba(59, 130, 246, 0.5);
+    outline-offset: 2px;
   }
   
-  /* Date Badge */
-  .date-badge {
-    padding: 6px 12px;
-    border-radius: 9999px;
-    background: rgba(71, 85, 105, 0.5);
-    border: 1px solid rgba(71, 85, 105, 0.5);
-    color: #cbd5e1;
-    font-size: 14px;
-    text-align: center;
-    line-height: 1.2;
+  /* Loading States */
+  .skeleton {
+    background: linear-gradient(90deg, rgba(71, 85, 105, 0.2) 25%, rgba(71, 85, 105, 0.4) 50%, rgba(71, 85, 105, 0.2) 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
   }
   
-  /* Channel Row Styling */
-  .channel-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 0;
-    border-bottom: 1px solid rgba(71, 85, 105, 0.1);
+  @keyframes loading {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
   }
-  
-  .channel-row:last-child {
-    border-bottom: none;
-  }
-  
-  .channel-info {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  
-  .channel-name {
-    font-size: 18px;
-    font-weight: 500;
-    color: white;
-    margin-bottom: 4px;
-  }
-  
-  .channel-description {
-    font-size: 14px;
-    color: #64748b;
-  }
-  
-  .channel-metrics {
-    text-align: right;
-  }
-  
-  .channel-revenue {
-    font-size: 20px;
-    font-weight: 700;
-    color: white;
-    margin-bottom: 4px;
-  }
-  
-  .channel-percentage {
-    font-size: 14px;
-    color: #10b981;
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .glass-panel {
+      padding: 20px;
+      border-radius: 16px;
+    }
+    
+    .org-chart {
+      padding: 10px;
+    }
+    
+    .executive-card {
+      min-width: 120px;
+    }
+    
+    .task-card {
+      padding: 16px;
+    }
   }
 }
